@@ -13,7 +13,7 @@ const tasks = data;
   </header>
 
   <main>
-    <TasksPage :tasks='tasks' :limit='16' />
+    <TasksPage :tasks='tasks' />
   </main>
 
 </template>
