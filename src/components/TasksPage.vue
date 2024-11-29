@@ -1,49 +1,23 @@
 <script setup>
 import TaskSection from "./TaskSection.vue";
-import TaskParagraph from "./TaskParagraph.vue";
-import TaskTitle from "./TaskTitle.vue";
-import { onMounted, reactive, ref } from "vue";
+import { ref } from "vue";
 import bootstrapMin from "bootstrap/dist/js/bootstrap.min";
+import PulseLoader from "vue-spinner/src/PulseLoader.vue";
 
 const props = defineProps({
-  tasks: {
+  tasksState: {
     type: Object,
     required: true,
   },
 });
 
 let tasks = ref([]);
+let isLoading = ref(true);
 
-props.tasks.then((res) => {
-  tasks.value = res;
+props.tasksState.then((res) => {
+  tasks.value = res.tasks;
+  isLoading.value = res.isLoading;
 });
-
-/**
- * Marks a task as done.
- *
- * This function takes a task and marks it as done by setting its
- * 'is_done' property to true. It then sorts the tasks array so that
- * done tasks are at the bottom of the list.
- *
- * @param {Object} task - The task to mark as done.
- */
-const markAsDone = (task) => {
-  task.is_done = true;
-  tasks.value.sort((a, b) => a.is_done - b.is_done);
-};
-
-/**
- * Deletes a task from the list of tasks.
- *
- * This function takes a task ID and removes the task with that ID from
- * the list of tasks.
- *
- * @param {Number} taskId The ID of the task to delete.
- * @return {void}
- */
-const deleteTask = (taskId) => {
-  tasks.value = tasks.value.filter((task) => task.id !== taskId);
-};
 
 /**
  * Adds a task to the list of tasks.
@@ -145,32 +119,14 @@ const resetAddTaskModal = () => {
       </div>
     </div>
   </div>
-  <div
-    class="container d-flex flex-column align-items-center"
-    v-for="task in tasks"
-    :key="task.id"
-  >
-    <TaskSection :is_done="task.is_done">
-      <div class="row justify-content-between">
-        <div class="col-8">
-          <TaskTitle :content="task.title" />
-          <TaskParagraph>
-            {{ task.description }}
-          </TaskParagraph>
-        </div>
-        <div class="col-4 text-end row justify-content-end gap-2">
-          <button
-            class="btn btn-success col"
-            :class="{ disabled: task.is_done }"
-            @click="markAsDone(task)"
-          >
-            Mark as done
-          </button>
-          <button class="btn btn-danger col" @click="deleteTask(task.id)">
-            Delete
-          </button>
-        </div>
+  <div class="container d-flex flex-column align-items-center">
+    <div v-if="! isLoading">
+      <div v-for="task in tasks" :key="task.id">
+        <TaskSection :task="task" :tasks="tasks" />
       </div>
-    </TaskSection>
+    </div>
+    <div v-else>
+      <PulseLoader></PulseLoader>
+    </div>
   </div>
 </template>

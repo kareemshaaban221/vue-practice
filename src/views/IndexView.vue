@@ -2,8 +2,8 @@
 import HeadingOne from '@/components/partials/HeadingOne.vue';
 import TasksPage from '@/components/TasksPage.vue';
 import configs from "@/../config/api.json";
-import data from '@/tasks.json';
-import { onMounted, reactive, ref } from 'vue';
+// import data from '@/tasks.json';
+import { reactive } from 'vue';
 
 let state = reactive({
   tasks: [],
@@ -19,12 +19,13 @@ let state = reactive({
 
 // TODO: this should be in the task container component
 // i keep this to practice passing data from one component to another
-const getTasks = async () => {
+const getTasksState = async () => {
   try {
     const response = await fetch(configs.api.url + '/tasks');
     state.tasks = await response.json();
+    state.isLoading = false;
     console.log(state.tasks);
-    return state.tasks;
+    return state;
   } catch (error) {
     console.error(error);
   }
@@ -38,7 +39,7 @@ const getTasks = async () => {
   </header>
 
   <main>
-    <TasksPage :tasks='getTasks()' />
+    <TasksPage :tasksState='getTasksState()' />
   </main>
 
 </template>
