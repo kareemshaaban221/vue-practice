@@ -1,0 +1,92 @@
+[
+  {
+    "id": 1,
+    "title": "Create a new blog post",
+    "description": "Write a blog post about a topic of your choice",
+    "is_done": false
+  },
+  {
+    "id": 2,
+    "title": "Buy milk",
+    "description": "Buy milk from the store",
+    "is_done": false
+  },
+  {
+    "id": 3,
+    "title": "Clean the house",
+    "description": "Clean the entire house",
+    "is_done": false
+  },
+  {
+    "id": 4,
+    "title": "Do laundry",
+    "description": "Do laundry for the week",
+    "is_done": false
+  },
+  {
+    "id": 5,
+    "title": "Call John",
+    "description": "Call John to catch up",
+    "is_done": false
+  },
+  {
+    "id": 6,
+    "title": "Make a doctor's appointment",
+    "description": "Make an appointment with Dr. Smith",
+    "is_done": false
+  },
+  {
+    "id": 7,
+    "title": "Buy a new phone",
+    "description": "Buy a new phone from the store",
+    "is_done": false
+  },
+  {
+    "id": 8,
+    "title": "Go for a walk",
+    "description": "Take a 30 minute walk around the block",
+    "is_done": false
+  },
+  {
+    "id": 9,
+    "title": "Cook dinner",
+    "description": "Cook dinner for the family",
+    "is_done": false
+  },
+  {
+    "id": 10,
+    "title": "Clean the car",
+    "description": "Clean the car inside and out",
+    "is_done": false
+  },
+  {
+    "id": 11,
+    "title": "Mow the lawn",
+    "description": "Mow the lawn in the backyard",
+    "is_done": false
+  },
+  {
+    "id": 12,
+    "title": "Buy groceries",
+    "description": "Buy groceries for the week",
+    "is_done": false
+  },
+  {
+    "id": 13,
+    "title": "Fix the sink",
+    "description": "Fix the leaky sink in the kitchen",
+    "is_done": false
+  },
+  {
+    "id": 14,
+    "title": "Paint the living room",
+    "description": "Paint the living room a new color",
+    "is_done": false
+  },
+  {
+    "id": 15,
+    "title": "Learn a new language",
+    "description": "Start learning a new language",
+    "is_done": false
+  }
+]
