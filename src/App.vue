@@ -1,6 +1,6 @@
 <script setup>
 import HeadingOne from './components/partials/HeadingOne.vue';
-import TasksContainer from './components/TasksContainer.vue';
+import TasksPage from './components/TasksPage.vue';
 import data from './tasks.json';
 
 const tasks = data;
@@ -13,7 +13,7 @@ const tasks = data;
   </header>
 
   <main>
-    <TasksContainer :tasks='tasks' />
+    <TasksPage :tasks='tasks' />
   </main>
 
 </template>

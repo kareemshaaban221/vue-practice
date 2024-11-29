@@ -10,7 +10,7 @@ defineProps({
 </script>
 
 <template>
-  <div :class="['p-3', 'border', 'rounded', 'w-100', is_done ? 'bg-success' : '']">
+  <div :class="['p-3', 'border', 'w-100', is_done ? 'bg-success' : '']">
     <slot></slot>
   </div>
 </template>
