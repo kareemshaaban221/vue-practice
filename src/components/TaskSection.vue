@@ -1,7 +1,9 @@
 <script setup>
-import { defineProps, ref } from 'vue';
+import { defineProps, reactive, ref } from 'vue';
 import TaskTitle from './TaskTitle.vue';
 import TaskParagraph from './TaskParagraph.vue';
+import { RouterLink } from 'vue-router';
+import TaskService from '@/services/TaskService';
 
 const props = defineProps({
   task: {
@@ -14,7 +16,10 @@ const props = defineProps({
   }
 });
 
+console.log(props.tasks);
+
 let tasks = ref(props.tasks);
+let task = reactive(props.task);
 
 /**
  * Marks a task as done.
@@ -39,12 +44,14 @@ const markAsDone = (task) => {
  * @param {Number} taskId The ID of the task to delete.
  * @return {void}
  */
-const deleteTask = (taskId) => {
+const deleteTask = async (taskId) => {
   console.log("deleting task");
-  const index = tasks.value.findIndex((task) => task.id === taskId);
-  if (index !== -1) {
-    tasks.value.splice(index, 1);
-  }
+  await TaskService.deleteTask(taskId).then(() => {
+    const index = tasks.value.findIndex((task) => task.id === taskId);
+    if (index !== -1) {
+      tasks.value.splice(index, 1);
+    }
+  });
 };
 </script>
 
@@ -64,9 +71,15 @@ const deleteTask = (taskId) => {
         >
           Mark as done
         </button>
-        <button class="btn btn-danger col" @click="deleteTask(task.id)">
+        <button
+          class="btn btn-danger col"
+          @click="deleteTask(task.id)"
+        >
           Delete
         </button>
+        <RouterLink class="btn btn-info" :to="`/${task.id}`">
+          Show Details
+        </RouterLink>
       </div>
     </div>
   </div>
