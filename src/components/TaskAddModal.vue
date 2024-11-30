@@ -1,14 +1,22 @@
 <script setup>
 import Task from "@/models/Task";
-import router from "@/router";
 import TaskService from "@/services/TaskService";
 import bootstrapMin from "bootstrap/dist/js/bootstrap.min";
-import { reactive } from "vue";
+import { reactive, ref } from "vue";
 import { useToast } from "vue-toastification";
 
 const form = reactive(new Task());
 
 const toast = useToast();
+
+const props = defineProps({
+  tasksState: {
+    type: Object,
+    required: true
+  }
+});
+
+const tasks = ref(props.tasksState);
 
 /**
  * Adds a task to the list of tasks.
@@ -20,11 +28,11 @@ const toast = useToast();
  * @return {void}
  */
 const addTask = () => {
-  TaskService.storeTask(form).then(() => {
+  TaskService.storeTask(form).then((response) => {
     console.log("task added");
     // todo: how to reload the page?
-    // router.go(0); // ? this reloads the page which not good
-    router.push({ name: "tasks.index" });
+    tasks.value.then(data => data.tasks.push(response));
+    console.log(tasks.value);
     toast.success("Task added!");
   });
   resetAddTaskModal();

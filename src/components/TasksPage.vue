@@ -29,7 +29,7 @@ props.tasksState.then((res) => {
     >
       Add Task
     </button>
-    <TaskAddModal />
+    <TaskAddModal :tasksState="props.tasksState" />
   </div>
   <div class="container d-flex flex-column align-items-center">
     <div v-if="! isLoading">
