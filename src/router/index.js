@@ -1,3 +1,10 @@
+/**
+ * @file src/router/index.js
+ * @module router
+ * @author Kareem Mohamed <kareemshaaban221@gmail.com>
+ * @since 1.0.0
+ */
+
 import { createRouter, createWebHistory } from 'vue-router'
 import IndexView from '@/views/IndexView.vue'
 import TaskView from '@/views/TaskView.vue'

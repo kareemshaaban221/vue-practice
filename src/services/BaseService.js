@@ -1,22 +1,66 @@
+/**
+ * BaseService.js
+ *
+ * Base class for all services in the application.
+ * Provides default values for the base URL of the API and a toast notification
+ * service.
+ *
+ * @file
+ * @module BaseService
+ * @author Kareem Mohamed <kareemshaaban221@gmail.com>
+ * @since 1.0.0
+ */
+
 import configs from "@/../config/api.json";
 import { useToast } from 'vue-toastification';
 
 class BaseService {
 
+  /**
+   * @type {string}
+   */
   baseUrl = configs.api.url.trim('/');
 
+  /**
+   * @type {Object.<number, string>}
+   */
+  errorMessages = {
+    404: "Not Found!",
+  };
+
+  /**
+   * BaseService constructor
+   * Initializes a new instance of the BaseService class.
+   */
   constructor() {
     console.log("about to make a request");
   }
 
+  /**
+   * Performs a fetch request to the provided URL, with optional options
+   * If the request is not successful (status code not between 200 and 299),
+   * throws an error with the response text as the error message
+   *
+   * @param {string} url - the URL to make the request to
+   * @param {Object} [options] - the options to pass to the fetch request
+   * @return {Promise} - a promise resolving to the response object if the request was successful
+   */
   async fetch(url, options = null) {
     let args = [url];
     if (options) args.push(options);
     return await fetch(...args)
-      .then(this.thenHandle)
-      .catch(this.errorHandle);
+      .then(this.thenHandle.bind(this))
+      .catch(this.errorHandle.bind(this));
   }
 
+  /**
+   * @description
+   * If the response is not "ok" (status code not between 200 and 299),
+   * throws an error with the response text as the error message
+   * @param {Response} response - the response object
+   * @return {Promise} - a promise resolving to the response object if the request was successful
+   * @throws {Error} - if the response is not "ok"
+   */
   thenHandle(response) {
     if (!response.ok) {
       let error = new Error(response.text());
@@ -26,10 +70,17 @@ class BaseService {
     return response;
   }
 
+  /**
+   * Handles errors by logging them and displaying a toast notification if the error status
+   * code exists in the predefined error messages.
+   *
+   * @param {Error} error - The error object, expected to contain a response with a status code.
+   */
   errorHandle(error) {
     console.log(error);
-    if (error.response.status == 404) {
-      useToast().error("Task Not Found!");
+    let status = error.response.status;
+    if (Object.prototype.hasOwnProperty.call(this.errorMessages, status)) {
+      useToast().error(this.errorMessages[status]);
     }
   }
 

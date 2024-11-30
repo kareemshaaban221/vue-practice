@@ -1,3 +1,12 @@
+/**
+ * @file
+ * @module Task
+ * @author Kareem Mohamed <kareemshaaban221@gmail.com>
+ * @since 1.0.0
+ *
+ * Class for tasks
+ */
+
 class Task {
 
   title = "";
