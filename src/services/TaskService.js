@@ -18,7 +18,7 @@ class TaskService {
     return await promise.json();
   }
 
-  async createTask(task) {
+  async storeTask(task) {
     let promise = await fetch(this.baseUrl + '/tasks', {
       method: 'POST',
       headers: {
@@ -36,6 +36,21 @@ class TaskService {
     return await promise.json();
   }
 
+  async updateTask(task) {
+    let promise = await fetch(this.baseUrl + '/tasks/' + task.id, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(task)
+    });
+    return await promise.json();
+  }
+
 }
 
+/**
+ * @return an object
+ * @see Task model for example of return the class itself
+ */
 export default new TaskService();
