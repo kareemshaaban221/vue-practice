@@ -1,25 +1,19 @@
-import configs from "@/../config/api.json";
+import BaseService from "./BaseService";
 
-class TaskService {
-
-  baseUrl = configs.api.url.trim('/');
-
-  constructor() {
-    console.log("about to make a request");
-  }
+class TaskService extends BaseService {
 
   async getTasks() {
-    let promise = await fetch(this.baseUrl + '/tasks');
+    let promise = await this.fetch(this.baseUrl + '/tasks');
     return await promise.json();
   }
 
   async getTask(taskId) {
-    let promise = await fetch(this.baseUrl + '/tasks/' + taskId);
+    let promise = await this.fetch(this.baseUrl + '/tasks/' + taskId);
     return await promise.json();
   }
 
   async storeTask(task) {
-    let promise = await fetch(this.baseUrl + '/tasks', {
+    let promise = await this.fetch(this.baseUrl + '/tasks', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -30,14 +24,14 @@ class TaskService {
   }
 
   async deleteTask(taskId) {
-    let promise = await fetch(this.baseUrl + '/tasks/' + taskId, {
+    let promise = await this.fetch(this.baseUrl + '/tasks/' + taskId, {
       method: 'DELETE'
     });
     return await promise.json();
   }
 
   async updateTask(task) {
-    let promise = await fetch(this.baseUrl + '/tasks/' + task.id, {
+    let promise = await this.fetch(this.baseUrl + '/tasks/' + task.id, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json'

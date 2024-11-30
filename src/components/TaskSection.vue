@@ -6,6 +6,7 @@ import { RouterLink } from 'vue-router';
 import TaskService from '@/services/TaskService';
 import router from '@/router';
 import PulseLoader from 'vue-spinner/src/PulseLoader.vue';
+import { useToast } from 'vue-toastification';
 
 const props = defineProps({
   task: {
@@ -17,6 +18,8 @@ const props = defineProps({
     required: true
   }
 });
+
+const toast = useToast();
 
 console.log(props.tasks);
 
@@ -40,6 +43,10 @@ const markAsDone = async (task) => {
   await TaskService.updateTask(task).then(() => {
     isLoading.value = false;
     tasks.value.sort((a, b) => a.is_done - b.is_done);
+    toast.success("Task marked as done!");
+  }).catch(() => {
+    task.is_done = false;
+    isLoading.value = false;
   });
 };
 
@@ -55,20 +62,24 @@ const markAsDone = async (task) => {
 const deleteTask = async (taskId) => {
   isLoading.value = true;
   console.log("deleting task");
-  await TaskService.deleteTask(taskId).then(() => {
+  await TaskService.deleteTask(taskId)
+  .then(() => {
     isLoading.value = false;
     const index = tasks.value.findIndex((task) => task.id === taskId);
     if (index !== -1) {
       tasks.value.splice(index, 1);
     }
     router.push({ name: "tasks.index" });
+    toast.success("Task deleted!");
+  }).catch(() => {
+    isLoading.value = false;
   });
 };
 </script>
 
 <template>
-  <div :class="['p-3', 'border', 'w-100', task.is_done ? 'bg-success' : '']" v-if="! isLoading">
-    <div class="row justify-content-between">
+  <div :class="['p-3', 'border', 'w-100', task.is_done ? 'bg-success' : '']">
+    <div class="row justify-content-between" v-if="! isLoading">
       <div class="col-8">
         <TaskTitle :content="task.title" />
         <TaskParagraph>
@@ -93,6 +104,8 @@ const deleteTask = async (taskId) => {
         </RouterLink>
       </div>
     </div>
+    <div class="text-center" v-else>
+      <PulseLoader></PulseLoader>
+    </div>
   </div>
-  <PulseLoader v-else></PulseLoader>
 </template>

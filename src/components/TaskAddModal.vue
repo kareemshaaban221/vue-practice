@@ -4,8 +4,11 @@ import router from "@/router";
 import TaskService from "@/services/TaskService";
 import bootstrapMin from "bootstrap/dist/js/bootstrap.min";
 import { reactive } from "vue";
+import { useToast } from "vue-toastification";
 
 const form = reactive(new Task());
+
+const toast = useToast();
 
 /**
  * Adds a task to the list of tasks.
@@ -20,7 +23,9 @@ const addTask = () => {
   TaskService.storeTask(form).then(() => {
     console.log("task added");
     // todo: how to reload the page?
+    // router.go(0); // ? this reloads the page which not good
     router.push({ name: "tasks.index" });
+    toast.success("Task added!");
   });
   resetAddTaskModal();
   closeAddTaskModal();
