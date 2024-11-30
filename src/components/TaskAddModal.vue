@@ -22,8 +22,8 @@ const addTask = () => {
     // todo: how to reload the page?
     router.push({ name: "tasks.index" });
   });
-  closeAddTaskModal();
   resetAddTaskModal();
+  closeAddTaskModal();
 };
 
 /**
@@ -42,8 +42,8 @@ const closeAddTaskModal = () => {
  * within the modal and clears their values.
  */
 const resetAddTaskModal = () => {
-  document.getElementById("title").value = "";
-  document.getElementById("description").value = "";
+  form.title = "";
+  form.description = "";
 };
 </script>
 
