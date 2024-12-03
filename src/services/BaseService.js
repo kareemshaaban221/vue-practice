@@ -11,7 +11,7 @@
  * @since 1.0.0
  */
 
-import configs from "@/../config/api.json";
+import configs from "@/../config/api";
 import { useToast } from 'vue-toastification';
 
 class BaseService {
@@ -27,6 +27,8 @@ class BaseService {
   errorMessages = {
     404: "Not Found!",
   };
+
+  unknownMessage = "Something went wrong!";
 
   /**
    * BaseService constructor
@@ -47,10 +49,24 @@ class BaseService {
    */
   async fetch(url, options = null) {
     let args = [url];
-    if (options) args.push(options);
+    if (options) args.push(this.adjustRequestHeaders(options));
     return await fetch(...args)
       .then(this.thenHandle.bind(this))
       .catch(this.errorHandle.bind(this));
+  }
+
+  /**
+   * Adjusts the request headers to specify that JSON data should be sent
+   * and received.
+   *
+   * @param {Object} options - the options to pass to the fetch request
+   * @return {Object} - the options with the adjusted headers
+   */
+  adjustRequestHeaders(options) {
+    options.headers = options.headers || {};
+    options.headers['Content-Type'] = 'application/json';
+    options.headers['Accept'] = 'application/json';
+    return options;
   }
 
   /**
@@ -62,8 +78,13 @@ class BaseService {
    * @throws {Error} - if the response is not "ok"
    */
   thenHandle(response) {
+    // > Note: don't read the stream twice
+    // > Read the stream only one time or js will throw an error
     if (!response.ok) {
-      let error = new Error(response.text());
+      // Here I was trying to read the stream twice using response.text();
+      // that's wrong: we should read the stream only one time from the service using
+      // response.json().
+      let error = new Error(/*response.text()*/);
       error.response = response;
       throw error;
     }
@@ -77,11 +98,17 @@ class BaseService {
    * @param {Error} error - The error object, expected to contain a response with a status code.
    */
   errorHandle(error) {
-    console.log(error);
-    let status = error.response.status;
+    const status = error.response.status;
     if (Object.prototype.hasOwnProperty.call(this.errorMessages, status)) {
       useToast().error(this.errorMessages[status]);
+    } else {
+      useToast().error(this.unknownMessage);
     }
+    // That's correct if I read the stream on the thenHandler
+    // Now thenHandler just return the response with the error and i handle the toast here
+    // and return the response again to the caller service to read the stream
+    // OLD:> error.response.json = () => { return error.response.data; };
+    return error.response;
   }
 
 }
