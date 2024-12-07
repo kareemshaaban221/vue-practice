@@ -5,6 +5,7 @@ import { reactive } from 'vue';
 import { useRoute } from 'vue-router';
 import TaskService from '@/services/TaskService';
 import AuthMiddleware from '@/middlewares/AuthMiddleware.vue';
+import NavBar from '@/components/NavBar.vue';
 
 let state = reactive({
   task: {},
@@ -32,6 +33,7 @@ const getTasksState = async () => {
   <AuthMiddleware>
     <header>
       <HeadingOne content="Task Details" />
+      <NavBar></NavBar>
     </header>
 
     <main>

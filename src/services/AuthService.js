@@ -20,6 +20,13 @@ class AuthService extends BaseService {
     return await response.getJson();
   }
 
+  async logout() {
+    this.addAuthenticationHeader = true;
+    return await this.fetch(ApiHelper.url('auth/logout'), {
+      method: 'POST'
+    });
+  }
+
 }
 
 export default new AuthService();

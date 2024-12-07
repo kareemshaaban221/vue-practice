@@ -6,6 +6,7 @@ import { reactive, ref } from "vue";
 import AuthService from "@/services/AuthService";
 import http from "@/../config/http";
 import router from "@/router";
+import { useToast } from "vue-toastification";
 
 const form = reactive(new Auth);
 const errors = reactive(new Auth);
@@ -38,6 +39,7 @@ const login = async () => {
     localStorage.setItem('token', response.data.auth.token);
     localStorage.setItem('user', new User(response.data.user).serialize());
     router.push({ name: 'tasks.index' });
+    useToast().success('Login successful!');
   }
 
 }

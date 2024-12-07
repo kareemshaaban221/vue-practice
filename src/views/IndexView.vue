@@ -4,6 +4,7 @@ import TasksPage from '@/components/TasksPage.vue';
 import { reactive } from 'vue';
 import TaskService from '@/services/TaskService';
 import AuthMiddleware from '@/middlewares/AuthMiddleware.vue';
+import NavBar from '@/components/NavBar.vue';
 
 let state = reactive({
   tasks: [],
@@ -28,6 +29,7 @@ const getTasksState = async () => {
   <AuthMiddleware>
     <header>
       <HeadingOne content="To-Do App" />
+      <NavBar></NavBar>
     </header>
 
     <main>
