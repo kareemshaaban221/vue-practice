@@ -5,8 +5,7 @@ class AuthService extends BaseService {
 
   errorMessages = {
     404: "Not Found!",
-    422: "Invalid Credentials!",
-    401: "Unauthenticated!"
+    422: "Invalid Credentials!"
   };
 
   constructor() {
@@ -18,7 +17,7 @@ class AuthService extends BaseService {
       method: 'POST',
       body: JSON.stringify(auth)
     });
-    return await response.json();
+    return await response.getJson();
   }
 
 }

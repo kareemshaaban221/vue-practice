@@ -12,7 +12,11 @@
  */
 
 import configs from "@/../config/api";
+import ResponseError from "@/errors/ResponseError";
+import Response from "@/http/Response";
 import { useToast } from 'vue-toastification';
+import http from "../../config/http";
+import router from "@/router";
 
 class BaseService {
 
@@ -24,11 +28,14 @@ class BaseService {
   /**
    * @type {Object.<number, string>}
    */
-  errorMessages = {
+  static errorMessages = {
     404: "Not Found!",
+    401: "Unauthenticated!"
   };
 
   unknownMessage = "Something went wrong!";
+
+  addAuthenticationHeader = false;
 
   /**
    * BaseService constructor
@@ -45,11 +52,11 @@ class BaseService {
    *
    * @param {string} url - the URL to make the request to
    * @param {Object} [options] - the options to pass to the fetch request
-   * @return {Promise} - a promise resolving to the response object if the request was successful
+   * @return {Promise<Response>} - a promise resolving to the response object if the request was successful
    */
   async fetch(url, options = null) {
     let args = [url];
-    if (options) args.push(this.adjustRequestHeaders(options));
+    args.push(this.adjustRequestHeaders(options));
     return await fetch(...args)
       .then(this.thenHandle.bind(this))
       .catch(this.errorHandle.bind(this));
@@ -63,9 +70,15 @@ class BaseService {
    * @return {Object} - the options with the adjusted headers
    */
   adjustRequestHeaders(options) {
+    options = options || {};
     options.headers = options.headers || {};
     options.headers['Content-Type'] = 'application/json';
     options.headers['Accept'] = 'application/json';
+    if (this.addAuthenticationHeader) {
+      options.headers['Authorization'] = 'Bearer ' + localStorage.getItem('token');
+    }
+    console.log(options.headers);
+
     return options;
   }
 
@@ -80,13 +93,12 @@ class BaseService {
   thenHandle(response) {
     // > Note: don't read the stream twice
     // > Read the stream only one time or js will throw an error
-    if (!response.ok) {
+    response = new Response(response);
+    if (! response.isOk()) {
       // Here I was trying to read the stream twice using response.text();
       // that's wrong: we should read the stream only one time from the service using
       // response.json().
-      let error = new Error(/*response.text()*/);
-      error.response = response;
-      throw error;
+      throw new ResponseError(response);
     }
     return response;
   }
@@ -95,20 +107,41 @@ class BaseService {
    * Handles errors by logging them and displaying a toast notification if the error status
    * code exists in the predefined error messages.
    *
-   * @param {Error} error - The error object, expected to contain a response with a status code.
+   * @param {ResponseError} error - The error object, expected to contain a response with a status code.
    */
   errorHandle(error) {
-    const status = error.response.status;
-    if (Object.prototype.hasOwnProperty.call(this.errorMessages, status)) {
-      useToast().error(this.errorMessages[status]);
+    const status = error.response.getStatus();
+    const errorMessages = this.getErrorMessages();
+    if (Object.prototype.hasOwnProperty.call(errorMessages, status)) {
+      useToast().error(errorMessages[status]);
     } else {
       useToast().error(this.unknownMessage);
+    }
+
+    if (status === http.status.UNAUTHORIZED) {
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+      // TODO: remove the redirect to login logic from here
+      router.push({ name: 'auth.login' });
     }
     // That's correct if I read the stream on the thenHandler
     // Now thenHandler just return the response with the error and i handle the toast here
     // and return the response again to the caller service to read the stream
     // OLD:> error.response.json = () => { return error.response.data; };
     return error.response;
+  }
+
+  /**
+   * Returns a combined object of error messages from the base service
+   * and the current service.
+   *
+   * @returns {Object} - An object containing error messages.
+   */
+  getErrorMessages() {
+    return {
+      ...BaseService.errorMessages,
+      ...this.errorMessages
+    };
   }
 
 }

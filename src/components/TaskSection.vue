@@ -75,12 +75,17 @@ const deleteTask = async (taskId) => {
     isLoading.value = false;
   });
 };
+
+const getTaskPath = (taskId) => {
+  return router.resolve({ name: "tasks.show", params: { id: taskId } });
+}
 </script>
 
 <template>
   <div :class="['p-3', 'border', 'w-100', task.is_done ? 'bg-success' : '']">
     <div class="row justify-content-between" v-if="! isLoading">
       <div class="col-8">
+        {{ task.id }}.
         <TaskTitle :content="task.title" />
         <TaskParagraph>
           {{ task.description }}
@@ -99,7 +104,7 @@ const deleteTask = async (taskId) => {
         >
           Delete
         </button>
-        <RouterLink class="btn btn-info" :to="`/${task.id}`">
+        <RouterLink class="btn btn-info" :to="getTaskPath(task.id)">
           Show Details
         </RouterLink>
       </div>

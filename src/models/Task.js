@@ -7,13 +7,16 @@
  * Class for tasks
  */
 
-class Task {
+import Model from "./Model";
+
+class Task extends Model {
 
   title = "";
   description = "";
   is_done = false;
 
   constructor(task = null) {
+    super();
     if (task) {
       Object.assign(this, task);
     }

@@ -4,6 +4,7 @@ import TaskPage from '@/components/TaskPage.vue';
 import { reactive } from 'vue';
 import { useRoute } from 'vue-router';
 import TaskService from '@/services/TaskService';
+import AuthMiddleware from '@/middlewares/AuthMiddleware.vue';
 
 let state = reactive({
   task: {},
@@ -17,10 +18,9 @@ const taskId = useRoute().params.id;
 // i keep this to practice passing data from one component to another
 const getTasksState = async () => {
   try {
-    state.tasks = await TaskService.getTasks();
-    state.task = state.tasks.filter((task) => task.id == taskId)[0];
+    state.task = await TaskService.getTask(taskId).then((res) => res.data);
     state.isLoading = false;
-    console.log(state.tasks);
+    console.log(state.task);
     return state;
   } catch (error) {
     console.error(error);
@@ -29,13 +29,13 @@ const getTasksState = async () => {
 </script>
 
 <template>
+  <AuthMiddleware>
+    <header>
+      <HeadingOne content="Task Details" />
+    </header>
 
-  <header>
-    <HeadingOne content="Task Details" />
-  </header>
-
-  <main>
-    <TaskPage :tasksState='getTasksState()' />
-  </main>
-
+    <main>
+      <TaskPage :tasksState='getTasksState()' />
+    </main>
+  </AuthMiddleware>
 </template>

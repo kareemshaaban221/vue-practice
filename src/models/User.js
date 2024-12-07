@@ -1,25 +1,24 @@
 /**
  * @file
- * @module Auth
+ * @module User
  * @author Kareem Mohamed <kareemshaaban221@gmail.com>
  * @since 1.0.0
  *
- * Class for auth user
+ * Class for user
  */
 
 import Model from "./Model";
 
-class Auth extends Model {
+class User extends Model {
 
+  id = null;
   name = "";
   email = "";
-  password = "";
-  password_confirmation = "";
 
-  constructor(auth = null) {
+  constructor(user = null) {
     super();
-    if (auth) {
-      Object.assign(this, auth);
+    if (user) {
+      Object.assign(this, user);
     }
   }
 
@@ -28,4 +27,4 @@ class Auth extends Model {
 /**
  * @return the class itself
  */
-export default Auth;
+export default User;

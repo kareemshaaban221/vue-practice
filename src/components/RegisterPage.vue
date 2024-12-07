@@ -1,26 +1,16 @@
 <script setup>
 import FormContainer from "./FormContainer.vue";
 import Auth from "@/models/Auth";
-import User from "@/models/User";
-import { reactive, ref } from "vue";
+import { reactive } from "vue";
 import AuthService from "@/services/AuthService";
 import http from "@/../config/http";
-import router from "@/router";
 
 const form = reactive(new Auth);
 const errors = reactive(new Auth);
 
-let isLoading = ref(false);
-
 const login = async () => {
-
   errors.email = errors.password = '';
-  isLoading.value = true;
-
-  const response = await AuthService.login(form).then((response) => {
-    isLoading.value = false;
-    return response;
-  });
+  const response = await AuthService.login(form);
 
   if (response.code === http.status.UNPROCESSABLE_ENTITY) {
     if (Object.prototype.hasOwnProperty.call(response.errors, 'email')) {
@@ -33,13 +23,6 @@ const login = async () => {
       errors.email = response.errors.message ?? '';
     }
   }
-
-  if (response.code === http.status.OK) {
-    localStorage.setItem('token', response.data.auth.token);
-    localStorage.setItem('user', new User(response.data.user).serialize());
-    router.push({ name: 'tasks.index' });
-  }
-
 }
 </script>
 
@@ -59,8 +42,7 @@ const login = async () => {
         <small class="text-danger" v-if="errors.password">* {{errors.password}}</small>
       </div>
       <div class="group-input">
-        <button class="btn btn-outline-light" v-if="! isLoading" type="submit">Login</button>
-        <button class="btn btn-outline-light" disabled v-else>processing...</button>
+        <button class="btn btn-outline-light" type="submit">Login</button>
       </div>
     </div>
   </form>
